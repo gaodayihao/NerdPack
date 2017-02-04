@@ -14,8 +14,9 @@ end
 
 local UI_Erros = {
 	-- infront / LoS
-	[50] = function(GUID)
+	[50] = function(GUID, spell)
 		addToData(GUID)
+		spellHasFailed[GUID][spell] = ''
 		spellHasFailed[GUID].infront = false
 	end,
 	-- SPELL_FAILED_OUT_OF_RANGE
@@ -27,12 +28,12 @@ local UI_Erros = {
 	[220] = function(GUID, spell)
 		addToData(GUID)
 		spellHasFailed[GUID][spell] = ''
-	end,
-	-- Item not ready
+	end
+	--[[ Item not ready FIX:ME wrong ID
 	[50] = function(GUID, spell)
 		addToData(GUID)
 		spellHasFailed[GUID][spell] = ''
-	end
+	end]]
 }
 
 function NeP.Helpers:Infront(target)

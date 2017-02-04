@@ -3,7 +3,6 @@ local UnitExists   = UnitExists
 local UnitGUID     = UnitGUID
 local C_Timer      = C_Timer
 local wipe         = wipe
-local UnitIsFriend = UnitIsFriend
 
 local Cache = {
   Enemy              = {},
@@ -21,9 +20,9 @@ end), nil)
 local function testunit(ounit, unit, distance, bypass, infront)
   local unit_dist = NeP.Protected.Distance(ounit, unit)
   if (NeP.DSL:Get('combat')(unit) or bypass)
-  and unit_dist <= tonumber(distance)
-  and (not infront or NeP.Protected.Infront(ounit, unit)) then
-      return true
+    and unit_dist <= tonumber(distance)
+    and (not infront or NeP.Protected.Infront(ounit, unit)) then
+    return true
   end
 end
 

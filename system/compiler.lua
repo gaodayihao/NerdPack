@@ -1,6 +1,7 @@
 local _, NeP = ...
 
 -- Locals
+local tonumber             = tonumber
 local GetInventorySlotInfo = GetInventorySlotInfo
 local GetInventoryItemID   = GetInventoryItemID
 local GetItemInfo          = GetItemInfo
@@ -91,11 +92,17 @@ function NeP.Compiler.Spell(eval, name)
 				ref.spell = GetInventoryItemID("player", invItem)
 			end
 			if not ref.spell then return end
-			local itemName, itemLink, _,_,_,_,_,_,_, texture = GetItemInfo(ref.spell)
+			local itemID = tonumber(ref.spell)
+			if not itemID then
+				itemID = NeP.Core:GetItemID(ref.spell)
+			end
+			if not tonumber(itemID) then return end
+			local itemName, itemLink, _,_,_,_,_,_,_, texture = GetItemInfo(itemID)
+			if not itemName then return end
+			ref.id = itemID
 			ref.spell = itemName
 			ref.icon = texture
 			ref.link = itemLink
-			ref.id = NeP.Core:GetItemID(itemName)
 		end)
 		skip = true
 	end
@@ -116,7 +123,7 @@ function NeP.Compiler.Spell(eval, name)
 	eval[1] = ref
 end
 
-function NeP.Compiler.Target(eval, name)
+function NeP.Compiler.Target(eval)
 	local ref = {}
 	if type(eval[3]) == 'string' then
 		ref.target = eval[3]
@@ -135,7 +142,10 @@ function NeP.Compiler.Target(eval, name)
 		ref.ground = true
 		eval.func = 'CastGround'
 		-- This is to alow casting at the cursor location where no unit exists
-		if ref.target:lower() == 'cursor' then ref.cursor = true end
+		if ref.target:lower() == 'cursor' then
+			ref.cursor = true
+			ref.target = nil
+		end
 	end
 	eval[3] = ref
 end
@@ -159,7 +169,7 @@ function NeP.Compiler.Conditions(eval, name)
 end
 
 function NeP.Compiler.CondLegacy(cond)
-	local str = ''
+	local str
 	if type(cond) == 'boolean' then
 		str = tostring(cond):lower()
 	elseif type(cond) == 'function' then
